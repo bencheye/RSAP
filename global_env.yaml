@@ -1,0 +1,19 @@
+# These parameters are used to configure the global running environment of RNAseq analysis pipeline
+# The parameters and values can only be modified by expert
+# Don't manually change any items in this file! Otherwise, it could make the pipeline not work!
+scriptPath : '/workspace/RSAP/Scripts'
+RulesPath : '/workspace/RSAP/Rules'
+referencePath: '/workspace/RSAP/Resource/Ref_genome'
+workPath : '/workspace'
+aligMethod : 
+  - hisat2
+  - STAR
+DEAMethod :
+  - DESeq2
+  - edgeR
+Organ:
+  - homo_sapiens
+  - musculus
+referenceType :
+  - genome
+  - transcriptome

@@ -1,0 +1,63 @@
+<h3> QC </h3>
+
+<h4> 1. Quality statistics of raw sequence data </h4>
+
+   <p>
+      The data volume and sequence quality of each sample sequence data (fastq) were counted with `fastqc` (v0.11.8).
+   </p>
+   <p>
+      The statistics of raw sequence data of each sample are shown in the table below：
+   </p>
+   {}
+   <br>
+   <p>
+   Column name explanation: <br>
+
+   (1) Sample: Name of sequencing sample;<br>
+   (2) Length(bp): Average length of reads;<br>
+   (3) Reads: Number of sequence reads;<br>
+   (4)  GC%: Calculate the percentage of the total number of bases G and C in the total number of bases;<br>
+   (5) Q20(%): Calculate the percentage of bases with phred value greater than 20 in the total base;<br>
+   (6) Q30(%): Calculate the percentage of bases with phred value greater than 30 in the total base;<br>
+   </p>
+
+<h4> 2. Quality control of sequence data </h4>
+<p>
+
+   In high-throughput sequencing, there are usually some sequencing errors such as point mutation, rRNA contamination, and the quality of the end of the sequence is relatively low. In order to obtain higher quality and more accurate biological information analysis results, it is necessary to optimize the original sequencing data.
+</p>
+<p>
+   Analysis software：`bowtie2` (v2.4.4)    `fastp` (v0.23.1)
+</p>
+<p>
+   Optimization steps and parameters:
+</p>
+   <h5> 1. Remove rRNA contamination </h5>
+   <p>
+
+      The reference index of `bowtie2` was constructed using the fasta sequence of rRNA of NCBI corresponding species, and then the rRNA sequence in analysis data was removed using `bowtie2` alignment.
+   </p>
+   <h5> 2. Remove low quality bases and reads </h5>
+   <p>
+      `Fastp`,  a effective tool to integrate multiple sequence data quality control methods, can filter low-quality, too short and too many N reads,  and remove joint pollution and cut off sub sequences with low mean value and so on. In RSAP, we use the default parameters recommended by `fastp` for quality control.
+   </p>
+   <P>
+   After quality control of sequence data of each sample, the statistics are as follows:
+   </P>
+   {}
+<p>
+   Column name explanation:<br>
+
+   (1) Sample: Name of sequencing sample;<br>
+   (2) Reads: Number of sequence reads;<br>
+   
+   (3) Bases: Total number of bases;<br>
+
+   (4) Length: Average length of reads;<br>
+   (5) Q20: Calculate the percentage of bases with phred value greater than 20 in the total base;<br>
+   (6) Q30: Calculate the percentage of bases with phred value greater than 30 in the total base;<br>
+   
+   (7) GC: Calculate the percentage of the total number of bases G and C in the total number of bases;<br>
+
+   (8) ReadPassRate: Proportion of reads that pass quality control in the total number of original reads;<br>
+</p>

@@ -1,0 +1,84 @@
+
+
+import os
+import sys
+import time
+import ruamel.yaml
+from ruamel import yaml
+
+if(len(sys.argv)!=3):
+	print("Please input two parameters!")
+	print("The first parameter is project name! (must)!")
+	print("The second parameter is used to specify the sequencing type") 
+	print("paired-end or single-end (please input 'pair' or 'single')! (must)") 
+	exit()
+
+proj_name = sys.argv[1]
+End = sys.argv[2]
+global_yaml = '/workspace/RSAP/global_env.yaml'
+
+# function
+def getYamlConfig(global_yaml):
+	with open(global_yaml, 'r', encoding='utf-8') as file:
+		yaml_str = file.read()
+		yal = ruamel.yaml.YAML()  
+		yaml_dict = yal.load(yaml_str)
+	return(yaml_dict)
+
+End = End.lower()
+if End == 'pair':
+	print('The analysis sample is paired-end!')
+elif End == 'single':
+	print('The analysis sample is single-end!')
+else:
+	print("the value of parameter 'End' must be 'pair' or 'single'!")
+	print("your input 'End' is : {}!".format(End))
+	exit()
+
+print("The input project name is : {}".format(proj_name))
+print("The value of 'End' is : {}".format(End))
+
+# params
+yaml_dict = getYamlConfig(global_yaml)
+work_dir = yaml_dict['workPath']
+script_path = yaml_dict['scriptPath']
+rules_path = yaml_dict['RulesPath']
+reference_path = yaml_dict['referencePath']
+now_time = time.strftime("%Y%m%d_%H%M%S", time.localtime())
+proj_name = proj_name + '_RNAseq_analysis_' + now_time
+proj_path = os.path.join(work_dir, 'project_analysis', proj_name)
+
+if not os.path.isdir(proj_path):  
+    os.makedirs(proj_path)
+
+os.chdir(proj_path)
+if not os.path.isdir('Result'):  
+    os.makedirs('Result')
+if not os.path.isdir('Data'):  
+    os.makedirs('Data')
+if not os.path.isdir('Log'):  
+    os.makedirs('Log')
+if not os.path.isdir('Report'):  
+    os.makedirs('Report')
+
+# build the parameter
+p = os.system('python {0}/rnaseq_config_create.py {1} {2} {3} {4} {5} {6} {7}'.format(script_path, script_path, proj_name, End, 
+		rules_path, proj_path, reference_path, global_yaml))
+if p == 0:
+	print('The config file has created!')
+else:
+	print("The config were not created!")
+
+print("The RNAseq analysis project:{} has created!".format(proj_name))
+print("The project path is :\n {}".format(proj_path))
+
+# build meta info
+meta_name = proj_path + '/metadata.xls'
+with open(meta_name, 'w', encoding='utf-8') as f:
+    f.write('Sample\tGroup')
+os.system("cp {}/RSAP_running.py {}/RSAP_running.py".format(script_path, proj_path))
+print("\n#############################################################################")
+print("Please fill the sample and group mapping information in 'metadata.xls', firstly.")
+print("Then, Please check and change as your analysis need")
+print(" the parameter file in 'project_run_config.yaml'.")
+print("Finally, running the 'RSAP' by run 'python RSAP_running.py\n'.")
